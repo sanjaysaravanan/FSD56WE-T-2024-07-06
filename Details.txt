@@ -102,3 +102,6 @@
         } 
         redirect to the long-url from our Front-End
         location.replace(longUrl); will redirect to the long-url
+
+FSD Demo:
+  1. E-Commerce with Payment Gateway
