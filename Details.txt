@@ -1,0 +1,104 @@
+
+  Registration Verify Email:
+
+    BE:
+
+      When user is registered,
+        put an extra field called as isVerified: false
+
+        send an email with url as the following,
+          <FE-URL>/verify-user-fe?token=<jwt-token>
+
+      /verify- user ( POST Call )
+        body / header: 
+          jwt token which contains userinfo ( token will expire in 15mins )
+        
+        gets the token verifies the token, get the useringo and make user's isVerified field as true
+    
+    FE:
+
+      /verify-user-fe
+
+        this page will read the token query parameter ( use hook useSearchParams from react-router-dom ) 
+        then will trigger an api call to /verify-user ( query parameter or POST body)
+
+    created a simple ui in frontend for the mail url
+
+    created a simple api to Verify the jwt and set verified flag to true
+
+  Password Reset Flow:
+    1. Forgot Password Page
+        1. Should have a input to take email
+        2. Trigger an API POST call /forgot-password with email ( query param / body )
+        3. Success -> UI should say Email for reseting password sent successfully
+        4. Failure -> if email does not exist ---> user not found
+    
+    2. BE API /forgot-password
+
+        1. Get email using query param / body
+        2. Check if the user exists
+            Yes, send an email <FE-URL>/reset-password?token=<jwt-token>
+              Response with { msg: 'Password Reset Email Sent successfully', code: 1 }
+            No, send a response status 404 ( user not found ), code: -1
+    
+    3.0. /verify-token 
+        simply accepts a token
+        token valid send success response with email address
+        invalid send error response
+    
+    3. Reset Password Page:
+        1. /reset-password?token=<jwt-token>
+        2. verify the token using /verify-token ( pass the received )
+            Yes, Open the Form for entering new password
+              Get the password
+              Submit --> trigger email for reset the password /reset-Password
+              body: email, new password
+              backend hash the password and store it with the proper email
+            No, link expired please try again
+    
+    4. BE API /reset-password ( Body: email, new password) 
+              body: email, new password
+              backend hash the password and store it with the proper email
+              Note: ** Stored the hashed not the plain password **
+
+  URL Shortener:
+
+    Login: Refer the node-project & node-fe
+    Register: Refer the node-project & node-fe
+
+    Step 1:
+      UI should a have a form for entering the long url
+
+        1. Enter URL and click submit
+        2. Trigger an api to the backend /url-shortner
+            pass (longUrl in the body or params)
+        
+    Step 2:
+      backend will receive the longUrl 
+      longUrl should be mapped with a url-id 
+      send the response with below,
+      ( <FE-URL>/<url-id> )
+
+      DB should contain:
+        longUrl
+        urlId
+        shortUrl: <FE-URL>/<url-id>
+      
+      send the response back like below
+        {
+          msg: "Url shortened successfully",
+          shortUrl: <FE-URL>/<url-id>
+        }
+    
+    Step 3:
+      Says somebody visits the shorturl,
+
+        <fe-url>/<url-id>
+
+        get the url-id using useParams
+        trigger an api call to get the long-url
+        {
+          long-url: actual-long-url
+        } 
+        redirect to the long-url from our Front-End
+        location.replace(longUrl); will redirect to the long-url
