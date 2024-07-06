@@ -105,3 +105,6 @@
 
 FSD Demo:
   1. E-Commerce with Payment Gateway
+  2. Simple UI Alert
+  3. Pop-Up forms or other overlays
+  4. simple animations to the site
